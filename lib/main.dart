@@ -1,4 +1,3 @@
-import 'package:codemagic_test/database.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,23 +29,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isCountLoaded = false;
   int _counter = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    Future(() async {
-      _counter = await DatabaseService().getCount();
-      _isCountLoaded = true;
-    });
-  }
-
-  void _incrementCounter() async {
+  void _incrementCounter() {
     setState(() {
       _counter++;
     });
-    await DatabaseService().setCount(_counter);
   }
 
   @override
@@ -62,11 +50,10 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            if (_isCountLoaded)
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ],
         ),
       ),
