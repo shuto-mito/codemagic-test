@@ -30,173 +30,61 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<String> keyboardListenerLogs = [];
-  final List<String> focusNodeLogs = [];
-  final List<String> focusWidgetLogs = [];
-  final keyboardFocusNode = FocusNode();
-  final focusWidgetFocusNode = FocusNode();
-  late final FocusNode focusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    focusNode = FocusNode(
-      onKey: (_, event) {
-        setState(() {
-          final updown = event is KeyDownEvent
-              ? "⬇Down"
-              : event is KeyUpEvent
-                  ? "⬆Up"
-                  : "";
-          focusNodeLogs.add(
-              '- 🟥RawKeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
-        });
-        return KeyEventResult.handled;
-      },
-      onKeyEvent: (_, event) {
-        setState(() {
-          final updown = event is KeyDownEvent
-              ? "⬇Down"
-              : event is KeyUpEvent
-                  ? "⬆Up"
-                  : "";
-          focusNodeLogs.add(
-              '- 🟦KeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
-        });
-        return KeyEventResult.handled;
-      },
-    );
-  }
+  final List<String> keyEventLogs = [];
+  final focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 0,
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          bottom: const TabBar(
-            tabs: <Widget>[
-              Tab(
-                text: 'KeyboardListener',
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Focus(
+          focusNode: focusNode,
+          onKey: (_, event) {
+            setState(() {
+              final updown = event is KeyDownEvent
+                  ? "⬇Down"
+                  : event is KeyUpEvent
+                      ? "⬆Up"
+                      : "";
+              keyEventLogs.add(
+                  '- 🟥RawKeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
+            });
+            return KeyEventResult.handled;
+          },
+          onKeyEvent: (_, event) {
+            setState(() {
+              final updown = event is KeyDownEvent
+                  ? "⬇Down"
+                  : event is KeyUpEvent
+                      ? "⬆Up"
+                      : "";
+              keyEventLogs.add(
+                  '- 🟦KeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
+            });
+            return KeyEventResult.handled;
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  textInputAction: TextInputAction.newline,
+                  onEditingComplete: () {},
+                ),
               ),
-              Tab(text: 'FocusNode'),
-              Tab(text: 'FocusWidget'),
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView(
+                  children: keyEventLogs.reversed.map((e) => Text(e)).toList(),
+                ),
+              )),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: <Widget>[
-            Center(
-              child: KeyboardListener(
-                focusNode: keyboardFocusNode,
-                onKeyEvent: (event) {
-                  final updown = event is KeyDownEvent
-                      ? "⬇Down"
-                      : event is KeyUpEvent
-                          ? "⬆Up"
-                          : "";
-                  setState(() {
-                    keyboardListenerLogs.add(
-                        '- [${event.logicalKey.keyLabel.toString()}] $updown');
-                  });
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: TextField(
-                        textInputAction: TextInputAction.newline,
-                        onEditingComplete: () {},
-                      ),
-                    ),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView(
-                        children: keyboardListenerLogs.reversed
-                            .map((e) => Text(e))
-                            .toList(),
-                      ),
-                    )),
-                  ],
-                ),
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      textInputAction: TextInputAction.newline,
-                      onEditingComplete: () {},
-                      focusNode: focusNode,
-                    ),
-                  ),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView(
-                      children: focusNodeLogs.reversed.map((e) => Text(e)).toList(),
-                    ),
-                  )),
-                ],
-              ),
-            ),
-            Center(
-              child: Focus(
-                focusNode: focusWidgetFocusNode,
-                onKey: (_, event) {
-                  setState(() {
-                    final updown = event is KeyDownEvent
-                        ? "⬇Down"
-                        : event is KeyUpEvent
-                            ? "⬆Up"
-                            : "";
-                    focusWidgetLogs.add(
-                        '- 🟥RawKeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
-                  });
-                  return KeyEventResult.handled;
-                },
-                onKeyEvent: (_, event) {
-                  setState(() {
-                    final updown = event is KeyDownEvent
-                        ? "⬇Down"
-                        : event is KeyUpEvent
-                            ? "⬆Up"
-                            : "";
-                    focusWidgetLogs.add(
-                        '- 🟦KeyEvent [${event.logicalKey.keyLabel.toString()}] $updown');
-                  });
-                  return KeyEventResult.handled;
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: TextField(
-                        textInputAction: TextInputAction.newline,
-                        onEditingComplete: () {},
-                      ),
-                    ),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView(
-                        children:
-                            focusWidgetLogs.reversed.map((e) => Text(e)).toList(),
-                      ),
-                    )),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
